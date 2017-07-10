@@ -1,0 +1,36 @@
+* {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+html, body {
+    background: rgb(255, 255, 255);
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+#head {
+    height: 5%;
+    background: rgb(255, 146, 93);
+}
+
+#options {
+    width: 45%;
+    height: 15%;
+    border: 1px solid black;
+    margin: 10px auto;
+}
+
+#content {
+    display: flex;
+    display: -webkit-flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.chart {
+    position: relative;
+    width: 25%;
+    height: 35%;
+    margin: auto;
+}
