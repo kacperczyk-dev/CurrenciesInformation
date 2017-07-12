@@ -3,7 +3,6 @@
  * Created by Dawid on 2017-07-10.
  */
 window.onload = function() {
-
     var data, labels = [];
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -26,39 +25,34 @@ window.onload = function() {
             labels.push(days[i].getAttribute('time'));
 
         }
-        alert(labels);
-        createLineChart();
+        createLineChart(document.getElementById("lineChart"), data, labels);
+        createBarChart(document.getElementById("barChart"), data, labels);
     }
 
-    function createBarChart()
+    function createBarChart(context, data, labels)
     {
-        var ctx = document.getElementById("myChart");
-        var myChart = new Chart(ctx, {
+        for(i=0; i<data.length; i++){
+            if(data[i] instanceof Array){
+            }
+    }
+
+        var myChart = new Chart(context, {
             type: 'bar',
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '1€ price in different currencies',
+                    label: 'Dollar',
                     data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                    ],
-                    borderColor: [
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor:
                         'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                    ],
                     borderWidth: 1
                 }]
             },
             options: {
                 title: {
                     display: true,
-                    text: 'Currencies'
+                    text:'1€ price'
                 },
                 scales: {
                     yAxes: [{
@@ -71,10 +65,10 @@ window.onload = function() {
         });
     }
 
-    function createLineChart()
+    function createLineChart(context, data, labels)
     {
         var ctx = document.getElementById("myChart");
-        var chart = new Chart(ctx, {
+        var chart = new Chart(context, {
             type: 'line',
             data: {
                 labels: labels,
@@ -82,13 +76,16 @@ window.onload = function() {
                     label: "Dollar",
                     data: data,
                     fill: false,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255,99,132,1)',
                 }]
+
             },
             options: {
                 responsive: true,
                 title:{
                     display:true,
-                    text:'1 euro price in dollar'
+                    text:'1€ price'
                 },
                 tooltips: {
                     mode: 'index',
@@ -118,3 +115,21 @@ window.onload = function() {
         });
     }
 };
+
+/*
+ rgba(54, 162, 235, 0.2)',
+ 'rgba(255, 206, 86, 0.2)',
+ 'rgba(75, 192, 192, 0.2)',
+ 'rgba(154, 162, 235, 0.2)',
+ 'rgba(155, 206, 86, 0.2)',
+ 'rgba(175, 192, 192, 0.2)',
+
+ 'rgba(54, 162, 235, 1)',
+ 'rgba(255, 206, 86, 1)',
+ 'rgba(75, 192, 192, 1)',
+ 'rgba(154, 162, 235, 1)',
+ 'rgba(155, 206, 86, 1)',
+ 'rgba(175, 192, 192, 1)',
+
+
+ */
