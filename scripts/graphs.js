@@ -16,15 +16,18 @@ window.onload = function() {
     function getData(xml) {
         var xmlDoc = xml.responseXML;
         var root = xmlDoc.getElementsByTagName('Cube')[0];
-        var days = root.childNodes; //This one has all the 90 days of data
-        var values = days[0].childNodes; //this is the first day
+        var days = root.children; //This one has all the 90 days of data
+        var values = days[0].children; //this is the first day
         data = [];
         labels = [];
-        for(i=0; i<values.length; i++){
-            data.push(values[i].getAttribute('rate'));
-            labels.push(values[i].getAttribute('currency'));
+
+        for(i=0; i<7; i++){
+            data.push(days[i].children[0].getAttribute('rate'));
+            labels.push(days[i].getAttribute('time'));
+
         }
-        createBarChart();
+        alert(labels);
+        createLineChart();
     }
 
     function createBarChart()
@@ -60,8 +63,7 @@ window.onload = function() {
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true,
-                            type: 'logarithmic',
+                            beginAtZero: true
                         }
                     }]
                 }
@@ -86,7 +88,7 @@ window.onload = function() {
                 responsive: true,
                 title:{
                     display:true,
-                    text:'Currency price in Euro'
+                    text:'1 euro price in dollar'
                 },
                 tooltips: {
                     mode: 'index',

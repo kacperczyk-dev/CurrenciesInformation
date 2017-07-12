@@ -26,11 +26,11 @@ html, body {
     display: -webkit-flex;
     justify-content: center;
     flex-wrap: wrap;
+    overflow: auto;
 }
 
 .chart {
     position: relative;
-    width: 50%;
-    height: 35%;
+    width: 45%;
     margin: auto;
 }
