@@ -3,51 +3,62 @@
  * Created by Dawid on 2017-07-10.
  */
 window.onload = function() {
+    function DataSet(label, data, fill, background, border){
+       this.label = label;
+       this.data = data;
+       this.fill = fill;
+       this.backgroundColor = background;
+       this.borderColor = border;
+    }
+
     var data, labels = [];
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            getData(this);
-        }
-    };
     xhttp.open("GET", "/CurrenciesInformation/data/eurofxref_hist_90d.xml", true);
     xhttp.send(null);
-    function getData(xml) {
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            initialize(this);
+        }
+    };
+
+    function initialize(xml) {
         var xmlDoc = xml.responseXML;
         var root = xmlDoc.getElementsByTagName('Cube')[0];
-        var days = root.children; //This one has all the 90 days of data
-        var values = days[0].children; //this is the first day
+        var days = root.children; //This one has all the days of data
+        //var values = days[0].children; //this is the first day
         data = [];
         labels = [];
 
+        //fill list with values
+        var currencyList = document.getElementById('currencyList');
+        for(i=0; i<days[0].children.length; i++){
+            var option = document.createElement("option");
+            option.text = days[0].children[i].getAttribute('currency');
+            option.value = i;
+            currencyList.appendChild(option);
+        }
+
+        //create 7 days data for charts and initialize them
         for(i=0; i<7; i++){
             data.push(days[i].children[0].getAttribute('rate'));
             labels.push(days[i].getAttribute('time'));
-
         }
-        createLineChart(document.getElementById("lineChart"), data, labels);
-        createBarChart(document.getElementById("barChart"), data, labels);
+        var sets = [
+            new DataSet("Dollar", data, false, 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)' ),
+            new DataSet("Dollar2", data, false, 'rgba(155, 99, 132, 0.2)', 'rgba(155, 99, 132, 1)' ),
+        ];
+        createLineChart(document.getElementById("lineChart"), sets, labels);
+        createBarChart(document.getElementById("barChart"), sets, labels);
     }
 
-    function createBarChart(context, data, labels)
+    function createBarChart(context, dataSets, labels)
     {
-        for(i=0; i<data.length; i++){
-            if(data[i] instanceof Array){
-            }
-    }
 
         var myChart = new Chart(context, {
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: [{
-                    label: 'Dollar',
-                    data: data,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor:
-                        'rgba(255,99,132,1)',
-                    borderWidth: 1
-                }]
+                datasets: dataSets,
             },
             options: {
                 title: {
@@ -72,14 +83,7 @@ window.onload = function() {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{
-                    label: "Dollar",
-                    data: data,
-                    fill: false,
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255,99,132,1)',
-                }]
-
+                datasets: data
             },
             options: {
                 responsive: true,
