@@ -4,33 +4,74 @@
     box-sizing: border-box;         /* Opera/IE 8+ */
 }
 html, body {
-    background: rgb(255, 255, 255);
+    font-family: 'Raleway', sans-serif;
+    font-size: 15px;
+    background: rgba(28, 28, 26, 0.9);
     margin: 0;
     height: 100vh;
-    overflow: hidden;
+    overflow: auto;
 }
 #head {
-    height: 5%;
-    background: rgb(255, 146, 93);
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.075em;
+    margin-top: 0;
 }
-
+#head ul {
+    margin: 0 25px 0 25px;
+    background: rgb(28, 28, 28);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+.first{
+    color: rgb(255, 228, 204);
+    float: left;
+}
+#last {
+    color: rgb(255, 173, 0);
+    font-family: 'Courgette', cursive;
+    float: right;
+}
+#head li a {
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+#head li.first a:hover {
+    background-color: rgb(102, 178, 255);
+}
+#last a:hover {
+    background-color: rgb(64, 106, 128);
+}
 #options {
-    width: 45%;
-    height: 15%;
-    border: 1px solid black;
-    margin: 10px auto;
+    margin: 25px auto;
 }
-
+fieldset {
+}
+fieldset *{
+    margin: 5px;
+}
+fieldset label {
+    display: block;
+}
+fieldset input[type='button']{
+    display: block;
+}
 #content {
+    background: rgb(255, 255, 255);
+    width: 1000px;
     display: flex;
     display: -webkit-flex;
     justify-content: center;
     flex-wrap: wrap;
-    overflow: auto;
+    margin:auto;
 }
 
 .chart {
     position: relative;
-    width: 45%;
-    margin: auto;
+    width: 800px;
+    margin: 40px auto;
 }
+

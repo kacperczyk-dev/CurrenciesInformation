@@ -4,38 +4,43 @@
     <meta charset="UTF-8">
     <title>Currencies Info</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Courgette|Oswald|Raleway" rel="stylesheet">
     <link href="styles/layout.css" rel="stylesheet" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.bundle.min.js"></script>
     <script src="scripts/graphs.js"></script>
 </head>
 <body>
-    <header id="head">
-
-    </header>
-    <div id="options">
-        <form>
-            <label>Base Currency</label>
-            <input class="baseCurr" type="radio" name="gender" value="euro" checked> Euro<br>
-            <input class="baseCurr" type="radio" name="gender" value="dollar"> Dollar<br>
-            <label>Date from/to</label>
-            <input type="date"/>
-            <input type="date"/>
-            <label>Add Currency</label>
-            <select id="currencyList"></select>
-        </form>
-    </div>
+    <navbar id="head">
+        <ul>
+            <li class="first"><a>Graphs</a></li>
+            <!-- <li class="first"><a>Exchange calculator</a></li> -->
+            <li id="last"><a href="https://kacperczyk-dev.github.io/"></a></li>
+        </ul>
+    </navbar>
     <section id="content">
+        <div id="options">
+            <form>
+                <fieldset>
+                    <legend>Base Currency</legend>
+                    <input id ="EU" class="baseCurr" name="curr" type="radio" value="EU" checked> Euro<br>
+                    <input id ="USD" class="baseCurr" name="curr" type="radio" value="D"> Dollar<br>
+                </fieldset>
+                <fieldset>
+                    <legend>Add Currency</legend>
+                    <select id="currencyList"></select>
+                </fieldset>
+                <fieldset>
+                    <legend>Period</legend>
+                    <input id= "dateFrom" type="date"/>
+                    <input id= "dateTo" type="date"/>
+                </fieldset>
+            </form>
+        </div>
         <div class="chart">
             <canvas id="lineChart"></canvas>
         </div>
         <div class="chart">
             <canvas id="barChart"></canvas>
-        </div>
-        <div class="chart">
-            <canvas id="myChart3"></canvas>
-        </div>
-        <div class="chart">
-            <canvas id="myChart4"></canvas>
         </div>
     </section>
 </body>

@@ -2,16 +2,29 @@
 /**
  * Created by Dawid on 2017-07-10.
  */
-window.onload = function() {
-    function DataSet(label, data, fill, background, border){
-       this.label = label;
-       this.data = data;
-       this.fill = fill;
-       this.backgroundColor = background;
-       this.borderColor = border;
-    }
+var xmlDoc, root, days;
+var base = 0;
+var sets = [], labels = [], colors = [], borders = [];
+var currencies = [0];
+var txt = 'Price per 1€';
+var myBarChart, myLineChart;
 
-    var data, labels = [];
+function DataSet(label, data, fill, background, border){
+    this.label = label;
+    this.data = data;
+    this.fill = fill;
+    this.backgroundColor = background;
+    this.borderColor = border;
+    this.borderWidth = 1;
+}
+
+window.onload = function() {
+    var me = '@' + new Date().getFullYear() + ' kacperczyk-dev';
+    document.getElementById('last').firstElementChild.innerHTML = me;
+    document.getElementById('dateFrom').value = '2017-07-03';
+    document.getElementById('dateTo').value = '2017-07-10';
+    var lineChart = document.getElementById('lineChart');
+    var barChart = document.getElementById('barChart');
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "/CurrenciesInformation/data/eurofxref_hist_90d.xml", true);
     xhttp.send(null);
@@ -22,39 +35,136 @@ window.onload = function() {
     };
 
     function initialize(xml) {
-        var xmlDoc = xml.responseXML;
-        var root = xmlDoc.getElementsByTagName('Cube')[0];
-        var days = root.children; //This one has all the days of data
-        //var values = days[0].children; //this is the first day
-        data = [];
-        labels = [];
-
-        //fill list with values
+        xmlDoc = xml.responseXML;
+        root = xmlDoc.getElementsByTagName('Cube')[0];
+        days = root.children;
         var currencyList = document.getElementById('currencyList');
         for(i=0; i<days[0].children.length; i++){
-            var option = document.createElement("option");
+            var option = document.createElement('option');
             option.text = days[0].children[i].getAttribute('currency');
             option.value = i;
             currencyList.appendChild(option);
         }
-
-        //create 7 days data for charts and initialize them
-        for(i=0; i<7; i++){
-            data.push(days[i].children[0].getAttribute('rate'));
-            labels.push(days[i].getAttribute('time'));
+        for(i=0; i< 250; i+=10){
+            var r = Math.floor(Math.random() * i);
+            var g = Math.floor(Math.random() * 255);
+            var b = Math.floor(Math.random() * 255);
+            colors.push('rgba('+ r +', ' + g + ', ' + b + ', 0.2)');
+            borders.push('rgba('+ r +', ' + g + ', ' + b + ', 1)');
         }
-        var sets = [
-            new DataSet("Dollar", data, false, 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)' ),
-            new DataSet("Dollar2", data, false, 'rgba(155, 99, 132, 0.2)', 'rgba(155, 99, 132, 1)' ),
-        ];
-        createLineChart(document.getElementById("lineChart"), sets, labels);
-        createBarChart(document.getElementById("barChart"), sets, labels);
+        getData();
+    }
+
+    function getData(){
+        var f = document.getElementById('dateFrom').value;
+        var t = document.getElementById('dateTo').value;
+        sets = [];
+        var data = [];
+        var r, g, b;
+        labels = [];
+        var dF = Date.parse(((!f) ? '2017-07-03' : f));
+        var dT = Date.parse(((!t) ? '2017-07-10' : t));
+        for (i = 0; i < days.length; i++) {
+            var date = Date.parse(days[i].getAttribute('time'));
+            if(date >= dF && date <= dT) {
+                labels.unshift(days[i].getAttribute('time'));
+            }
+        }
+        for(j=0; j<currencies.length; j++) {
+
+            for (i = 0; i < days.length; i++) {
+                var date = Date.parse(days[i].getAttribute('time'));
+                if(date >= dF && date <= dT) {
+                    data.unshift(days[i].children[currencies[j]].getAttribute('rate'));
+                }
+            }
+            sets.push(new DataSet(days[0].children[currencies[j]].getAttribute('currency'), data,
+                false, colors[sets.length], borders[sets.length]));
+            data = [];
+        }
+        if(base==1){
+            base = 0;
+            changeBase(1);
+        }
+        else {
+            if(myLineChart == undefined) {
+                createLineChart(lineChart, sets, labels);
+                createBarChart(barChart, sets, labels);
+            } else {
+                updateChart(myLineChart);
+                updateChart(myBarChart);
+            }
+        }
+    }
+
+    var dateFr = document.getElementById('dateFrom');
+    var dateTo = document.getElementById('dateTo');
+    dateTo.addEventListener('change', setPeriod);
+    dateFr.addEventListener('change', setPeriod);
+    function setPeriod(){
+       if(dateFr.value && dateTo.value){
+            getData();
+       }
+    }
+
+    var euro = document.getElementById('EU');
+    var dollar = document.getElementById('USD');
+    euro.addEventListener('click', function(){changeBase(0)}, false);
+    dollar.addEventListener('click', function(){changeBase(1)}, false);
+    function changeBase(arg){
+        if(base != arg && arg == 1) {
+            base = arg;
+            txt = 'Price per 1$';
+            for (i = 0; i < sets.length; i++) {
+                for (j = 0; j < sets[i].data.length; j++) {
+                    if (i == 0) {
+                        sets[i].data[j] = 1 / sets[i].data[j];
+                        sets[i].label = 'EUR';
+                    } else {
+                        sets[i].data[j] = sets[i].data[j] * sets[0].data[j];
+                    }
+                }
+            }
+            updateChart(myLineChart);
+            updateChart(myBarChart);
+        }
+        if(base != arg && arg == 0) {
+            base = arg;
+            txt = 'Price per 1€';
+            for (i = 0; i < sets.length; i++) {
+                for (j = 0; j < sets[i].data.length; j++) {
+                    if (i == 0) {
+                        sets[i].data[j] = 1 / sets[i].data[j];
+                        sets[i].label = 'USD';
+                    } else {
+                        sets[i].data[j] = sets[i].data[j] * sets[0].data[j];
+                    }
+                }
+            }
+            updateChart(myLineChart);
+            updateChart(myBarChart);
+        }
+    }
+
+    var list = document.getElementById('currencyList');
+    list.addEventListener('change', addFromList);
+    function addFromList(){
+        if(list.selectedIndex>0){
+            currencies.push(list.options[list.selectedIndex].value);
+            getData();
+        }
+    }
+
+    function updateChart(chart){
+        chart.data.datasets = sets;
+        chart.data.labels = labels;
+        chart.options.title.text = txt;
+        chart.update();
     }
 
     function createBarChart(context, dataSets, labels)
     {
-
-        var myChart = new Chart(context, {
+        myBarChart = new Chart(context, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -63,12 +173,19 @@ window.onload = function() {
             options: {
                 title: {
                     display: true,
-                    text:'1€ price'
+                    text: txt
                 },
                 scales: {
                     yAxes: [{
-                        ticks: {
-                            beginAtZero: true
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Price'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Day'
                         }
                     }]
                 }
@@ -76,28 +193,18 @@ window.onload = function() {
         });
     }
 
-    function createLineChart(context, data, labels)
+    function createLineChart(context, dataSets, labels)
     {
-        var ctx = document.getElementById("myChart");
-        var chart = new Chart(context, {
+        myLineChart = new Chart(context, {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: data
+                datasets: dataSets,
             },
             options: {
-                responsive: true,
                 title:{
                     display:true,
-                    text:'1€ price'
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
+                    text: txt
                 },
                 scales: {
                     xAxes: [{
@@ -118,6 +225,7 @@ window.onload = function() {
             }
         });
     }
+
 };
 
 /*
