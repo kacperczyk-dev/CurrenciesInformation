@@ -12,8 +12,8 @@
 <body>
     <navbar id="head">
         <ul>
-            <li class="first"><a>Graphs</a></li>
-            <!-- <li class="first"><a>Exchange calculator</a></li> -->
+            <li class="first"><a href="#content">Graphs</a></li>
+            <li class="first"><a href="#calculator">Exchange calculator</a></li>
             <li id="last"><a href="https://kacperczyk-dev.github.io/"></a></li>
         </ul>
     </navbar>
@@ -27,10 +27,11 @@
                 </fieldset>
                 <fieldset>
                     <legend>Add Currency</legend>
-                    <select id="currencyList"></select>
+                    <select id="currencyList" class="currencies"></select>
                 </fieldset>
                 <fieldset>
                     <legend>Period</legend>
+                    <p>Data available for period between 12-04-2017 and 10-07-2017</p>
                     <input id= "dateFrom" type="date"/>
                     <input id= "dateTo" type="date"/>
                 </fieldset>
@@ -41,6 +42,20 @@
         </div>
         <div class="chart">
             <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart">
+            <form id="calculator">
+            <fieldset>
+                <legend>Calculator</legend>
+                <p>Data available for period between 12-04-2017 and 10-07-2017</p>
+                <input id="date" type="date">
+                <select id="from" class="currencies"/>
+                <input id="in" type="number" />
+                <pre> = </pre>
+                <select id="to" class="currencies"/>
+                <input id="out" disabled="disabled"/>
+            </fieldset>
+            </form>
         </div>
     </section>
 </body>

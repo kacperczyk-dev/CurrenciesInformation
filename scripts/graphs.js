@@ -8,6 +8,8 @@ var sets = [], labels = [], colors = [], borders = [];
 var currencies = [0];
 var txt = 'Price per 1€';
 var myBarChart, myLineChart;
+var minDate = '';
+var maxDate = '';
 
 function DataSet(label, data, fill, background, border){
     this.label = label;
@@ -20,9 +22,6 @@ function DataSet(label, data, fill, background, border){
 
 window.onload = function() {
     var me = '@' + new Date().getFullYear() + ' kacperczyk-dev';
-    document.getElementById('last').firstElementChild.innerHTML = me;
-    document.getElementById('dateFrom').value = '2017-07-03';
-    document.getElementById('dateTo').value = '2017-07-10';
     var lineChart = document.getElementById('lineChart');
     var barChart = document.getElementById('barChart');
     var xhttp = new XMLHttpRequest();
@@ -38,12 +37,18 @@ window.onload = function() {
         xmlDoc = xml.responseXML;
         root = xmlDoc.getElementsByTagName('Cube')[0];
         days = root.children;
-        var currencyList = document.getElementById('currencyList');
-        for(i=0; i<days[0].children.length; i++){
-            var option = document.createElement('option');
-            option.text = days[0].children[i].getAttribute('currency');
-            option.value = i;
-            currencyList.appendChild(option);
+        var currencies = document.getElementsByClassName('currencies');
+        var length = days[0].children.length;
+        var currLength = currencies.length;
+        maxDate =  days[0].getAttribute('time');
+        minDate = days[days.length-1].getAttribute('time');
+        for(j=0; j<currLength; j++) {
+            for (i = 0; i < length; i++) {
+                var option = document.createElement('option');
+                option.text = days[0].children[i].getAttribute('currency');
+                option.value = i;
+                currencies[j].appendChild(option);
+            }
         }
         for(i=0; i< 250; i+=10){
             var r = Math.floor(Math.random() * i);
@@ -52,48 +57,63 @@ window.onload = function() {
             colors.push('rgba('+ r +', ' + g + ', ' + b + ', 0.2)');
             borders.push('rgba('+ r +', ' + g + ', ' + b + ', 1)');
         }
+        document.getElementById('last').firstElementChild.innerHTML = me;
+        document.getElementById('dateFrom').value = '2017-07-03';
+        document.getElementById('dateTo').value = maxDate;
+        document.getElementById('date').value = maxDate;
+        document.getElementById('to').selectedIndex = 5;
         getData();
     }
 
     function getData(){
         var f = document.getElementById('dateFrom').value;
         var t = document.getElementById('dateTo').value;
-        sets = [];
-        var data = [];
-        var r, g, b;
-        labels = [];
-        var dF = Date.parse(((!f) ? '2017-07-03' : f));
-        var dT = Date.parse(((!t) ? '2017-07-10' : t));
-        for (i = 0; i < days.length; i++) {
-            var date = Date.parse(days[i].getAttribute('time'));
-            if(date >= dF && date <= dT) {
-                labels.unshift(days[i].getAttribute('time'));
-            }
-        }
-        for(j=0; j<currencies.length; j++) {
-
-            for (i = 0; i < days.length; i++) {
+        if(Date.parse(f) >= Date.parse(minDate) && Date.parse(t) <= Date.parse(maxDate)
+            && Date.parse(f) < Date.parse(t)) {
+            document.getElementById('options').getElementsByTagName('fieldset')[2]
+                .getElementsByTagName('p')[0].style.display = 'none';
+            sets = [];
+            var data = [];
+            var r, g, b;
+            labels = [];
+            var dF = Date.parse(((!f) ? '2017-07-03' : f));
+            var dT = Date.parse(((!t) ? '2017-07-10' : t));
+            var daysLength = days.length
+            for (i = 0; i < daysLength; i++) {
                 var date = Date.parse(days[i].getAttribute('time'));
-                if(date >= dF && date <= dT) {
-                    data.unshift(days[i].children[currencies[j]].getAttribute('rate'));
+                if (date >= dF && date <= dT) {
+                    labels.unshift(days[i].getAttribute('time'));
                 }
             }
-            sets.push(new DataSet(days[0].children[currencies[j]].getAttribute('currency'), data,
-                false, colors[sets.length], borders[sets.length]));
-            data = [];
-        }
-        if(base==1){
-            base = 0;
-            changeBase(1);
-        }
-        else {
-            if(myLineChart == undefined) {
-                createLineChart(lineChart, sets, labels);
-                createBarChart(barChart, sets, labels);
-            } else {
-                updateChart(myLineChart);
-                updateChart(myBarChart);
+            var currLength = currencies.length;
+            for (j = 0; j < currLength; j++) {
+
+                for (i = 0; i < daysLength; i++) {
+                    var date = Date.parse(days[i].getAttribute('time'));
+                    if (date >= dF && date <= dT) {
+                        data.unshift(days[i].children[currencies[j]].getAttribute('rate'));
+                    }
+                }
+                sets.push(new DataSet(days[0].children[currencies[j]].getAttribute('currency'), data,
+                    false, colors[sets.length], borders[sets.length]));
+                data = [];
             }
+            if (base == 1) {
+                base = 0;
+                changeBase(1);
+            }
+            else {
+                if (myLineChart == undefined) {
+                    createLineChart(lineChart, sets, labels);
+                    createBarChart(barChart, sets, labels);
+                } else {
+                    updateChart(myLineChart);
+                    updateChart(myBarChart);
+                }
+            }
+        } else {
+            document.getElementById('options').getElementsByTagName('fieldset')[2]
+                .getElementsByTagName('p')[0].style.display = 'block';
         }
     }
 
@@ -112,10 +132,11 @@ window.onload = function() {
     euro.addEventListener('click', function(){changeBase(0)}, false);
     dollar.addEventListener('click', function(){changeBase(1)}, false);
     function changeBase(arg){
+        var length = sets.length;
         if(base != arg && arg == 1) {
             base = arg;
             txt = 'Price per 1$';
-            for (i = 0; i < sets.length; i++) {
+            for (i = 0; i < length; i++) {
                 for (j = 0; j < sets[i].data.length; j++) {
                     if (i == 0) {
                         sets[i].data[j] = 1 / sets[i].data[j];
@@ -131,7 +152,7 @@ window.onload = function() {
         if(base != arg && arg == 0) {
             base = arg;
             txt = 'Price per 1€';
-            for (i = 0; i < sets.length; i++) {
+            for (i = 0; i < length; i++) {
                 for (j = 0; j < sets[i].data.length; j++) {
                     if (i == 0) {
                         sets[i].data[j] = 1 / sets[i].data[j];
@@ -160,6 +181,35 @@ window.onload = function() {
         chart.data.labels = labels;
         chart.options.title.text = txt;
         chart.update();
+    }
+
+    document.getElementById("in").addEventListener('input', calculate);
+    document.getElementById("date").addEventListener('change', calculate);
+    document.getElementById("from").addEventListener('change', calculate);
+    document.getElementById("to").addEventListener('change', calculate);
+    function calculate() {
+        var dateOn = Date.parse(document.getElementById('date').value);
+        if(dateOn >= Date.parse('2017-04-12') && dateOn <= Date.parse('2017-07-10')) {
+            document.getElementById('calculator').getElementsByTagName('p')[0].style.display = 'none';
+            var fromCurr = document.getElementById('from').options[document.getElementById('from').selectedIndex].value;
+            var fromCurrValue = 1;
+            var toCurr = document.getElementById('to').options[document.getElementById('to').selectedIndex].value;
+            var toCurrValue = 0;
+            var amount = document.getElementById('in').value;
+            var output = document.getElementById('out');
+            var daysLength = days.length;
+            var currLength = days[0].length;
+            for (i = 0; i < daysLength; i++) {
+                if (Date.parse(days[i].getAttribute('time')) == dateOn) {
+                    fromCurrValue = days[i].children[fromCurr].getAttribute('rate');
+                    toCurrValue = days[i].children[toCurr].getAttribute('rate');
+                    break;
+                }
+            }
+            output.value = Math.round((amount * toCurrValue / fromCurrValue + 0.00001) * 100) / 100;
+        } else{
+            document.getElementById('calculator').getElementsByTagName('p')[0].style.display = 'block';
+        }
     }
 
     function createBarChart(context, dataSets, labels)
@@ -227,21 +277,3 @@ window.onload = function() {
     }
 
 };
-
-/*
- rgba(54, 162, 235, 0.2)',
- 'rgba(255, 206, 86, 0.2)',
- 'rgba(75, 192, 192, 0.2)',
- 'rgba(154, 162, 235, 0.2)',
- 'rgba(155, 206, 86, 0.2)',
- 'rgba(175, 192, 192, 0.2)',
-
- 'rgba(54, 162, 235, 1)',
- 'rgba(255, 206, 86, 1)',
- 'rgba(75, 192, 192, 1)',
- 'rgba(154, 162, 235, 1)',
- 'rgba(155, 206, 86, 1)',
- 'rgba(175, 192, 192, 1)',
-
-
- */

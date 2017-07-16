@@ -12,6 +12,10 @@ html, body {
     overflow: auto;
 }
 #head {
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    width: 100%;
     font-family: 'Oswald', sans-serif;
     letter-spacing: 0.075em;
     margin-top: 0;
@@ -24,12 +28,12 @@ html, body {
     padding: 0;
     overflow: hidden;
 }
-.first{
-    color: rgb(255, 228, 204);
+.first a{
+    color: rgb(255, 240, 227);
     float: left;
 }
-#last {
-    color: rgb(255, 173, 0);
+#last a{
+    color: rgb(255, 186, 0);
     font-family: 'Courgette', cursive;
     float: right;
 }
@@ -43,22 +47,10 @@ html, body {
     background-color: rgb(102, 178, 255);
 }
 #last a:hover {
-    background-color: rgb(64, 106, 128);
+    background-color: rgb(102, 178, 255);
+    color: rgb(255, 255, 245);
 }
-#options {
-    margin: 25px auto;
-}
-fieldset {
-}
-fieldset *{
-    margin: 5px;
-}
-fieldset label {
-    display: block;
-}
-fieldset input[type='button']{
-    display: block;
-}
+
 #content {
     background: rgb(255, 255, 255);
     width: 1000px;
@@ -66,12 +58,30 @@ fieldset input[type='button']{
     display: -webkit-flex;
     justify-content: center;
     flex-wrap: wrap;
-    margin:auto;
+    margin: 50px auto 0 auto;
 }
-
+#options {
+    margin: 25px auto;
+}
+#options fieldset {
+}
+#options fieldset *{
+    margin: 5px;
+}
+fieldset p{
+    display: none;
+    font-size: 12px;
+    color: rgb(255, 0, 11);
+}
 .chart {
     position: relative;
     width: 800px;
     margin: 40px auto;
 }
 
+.chart fieldset pre{
+    display: inline;
+}
+#calculator fieldset *{
+    margin: 5px;
+}
