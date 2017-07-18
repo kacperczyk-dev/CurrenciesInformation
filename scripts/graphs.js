@@ -57,7 +57,7 @@ window.onload = function() {
             colors.push('rgba('+ r +', ' + g + ', ' + b + ', 0.2)');
             borders.push('rgba('+ r +', ' + g + ', ' + b + ', 1)');
         }
-        document.getElementById('last').firstElementChild.innerHTML = me;
+        document.getElementById('last').firstElementChild.textContent = me;
         document.getElementById('dateFrom').value = '2017-07-03';
         document.getElementById('dateTo').value = maxDate;
         document.getElementById('date').value = maxDate;
@@ -198,7 +198,6 @@ window.onload = function() {
             var amount = document.getElementById('in').value;
             var output = document.getElementById('out');
             var daysLength = days.length;
-            var currLength = days[0].length;
             for (i = 0; i < daysLength; i++) {
                 if (Date.parse(days[i].getAttribute('time')) == dateOn) {
                     fromCurrValue = days[i].children[fromCurr].getAttribute('rate');

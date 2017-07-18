@@ -9,8 +9,15 @@ html, body {
     background: rgba(28, 28, 26, 0.9);
     margin: 0;
     height: 100vh;
+    width: 100vw;
     overflow: auto;
 }
+@media only screen and (max-width: 800px) {
+    #content {
+        width: 400px;
+    }
+}
+
 #head {
     z-index: 1;
     position: fixed;
@@ -33,7 +40,7 @@ html, body {
     float: left;
 }
 #last a{
-    color: rgb(255, 186, 0);
+    color: rgb(186, 0, 255);
     font-family: 'Courgette', cursive;
     float: right;
 }
@@ -75,7 +82,7 @@ fieldset p{
 }
 .chart {
     position: relative;
-    width: 800px;
+    width: 80%;
     margin: 40px auto;
 }
 
@@ -84,4 +91,8 @@ fieldset p{
 }
 #calculator fieldset *{
     margin: 5px;
+}
+#out {
+    pointer-events:none;
+    background-color: rgb(255, 255, 255);
 }
