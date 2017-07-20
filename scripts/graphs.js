@@ -25,7 +25,7 @@ window.onload = function() {
     var lineChart = document.getElementById('lineChart');
     var barChart = document.getElementById('barChart');
     var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "/CurrenciesInformation/data/eurofxref_hist_90d.xml", true);
+    xhttp.open("GET", "data/eurofxref_hist_90d.xml", true);
     xhttp.send(null);
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
